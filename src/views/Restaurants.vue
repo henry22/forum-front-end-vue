@@ -14,6 +14,14 @@
       />
     </div>
     <!-- 分頁標籤 RestaurantPagination -->
+    <RestaurantPagination
+      :current-page="currentPage"
+      :total-page="totalPage"
+      :category-id="categoryId"
+      :previous-page="previousPage"
+      :next-page="nextPage"
+      v-if="totalPage.length > 1"
+    />
   </div>
 </template>
 
@@ -21,6 +29,7 @@
 import NavTabs from "./../components/NavTabs";
 import RestaurantCard from "./../components/RestaurantCard";
 import RestaurantsNavPills from "./../components/RestaurantsNavPills";
+import RestaurantPagination from "./../components/RestaurantsPagination";
 
 const dummyData = {
   restaurants: [
@@ -298,7 +307,8 @@ export default {
   components: {
     NavTabs,
     RestaurantCard,
-    RestaurantsNavPills
+    RestaurantsNavPills,
+    RestaurantPagination
   },
   data() {
     return {
