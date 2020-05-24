@@ -10,12 +10,14 @@
       @after-delete-comment="afterDeleteComment"
     />
     <!-- 新增評論 CreateComment -->
+    <CreateComment :restaurant-id="restaurant.id" @after-create-comment="afterCreateComment" />
   </div>
 </template>
 
 <script>
 import RestaurantDetail from "./../components/RestaurantDetail";
 import RestaurantComments from "./../components/RestaurantComments";
+import CreateComment from "./../components/CreateComment";
 
 const dummyData = {
   restaurant: {
@@ -354,10 +356,22 @@ const dummyData = {
   isFavorited: false,
   isLiked: true
 };
+const dummyUser = {
+  currentUser: {
+    id: 1,
+    name: "root",
+    email: "root@example.com",
+    image: null,
+    isAdmin: true
+  },
+  isAuthenticated: true
+};
+
 export default {
   components: {
     RestaurantDetail,
-    RestaurantComments
+    RestaurantComments,
+    CreateComment
   },
   data() {
     return {
@@ -373,6 +387,7 @@ export default {
         isFavorited: false,
         isLiked: false
       },
+      currentUser: dummyUser.currentUser,
       restaurantComments: []
     };
   },
@@ -412,7 +427,22 @@ export default {
     },
     afterDeleteComment(commentId) {
       // 以 filter 保留未被選擇的 comment.id
-      this.restaurantComments = this.restaurantComments.filter(restaurantComment => restaurantComment.id !== commentId)
+      this.restaurantComments = this.restaurantComments.filter(
+        restaurantComment => restaurantComment.id !== commentId
+      );
+    },
+    afterCreateComment(payload) {
+      const { commentId, restaurantId, text } = payload;
+      this.restaurantComments.push({
+        id: commentId,
+        RestaurantId: restaurantId,
+        User: {
+          id: this.currentUser.id,
+          name: this.currentUser.name
+        },
+        text,
+        createdAt: new Date()
+      });
     }
   }
 };
