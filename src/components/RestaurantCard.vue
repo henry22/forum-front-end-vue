@@ -26,17 +26,20 @@
           class="btn btn-primary btn-border favorite mr-2"
           type="button"
           v-else
-          @click.stop.prevent="addFavorite">加到最愛</button>
+          @click.stop.prevent="addFavorite"
+        >加到最愛</button>
         <button
           class="btn btn-danger like mr-2"
           type="button"
           v-if="restaurant.isLiked"
-          @click.stop.prevent="deleteLike">Unlike</button>
+          @click.stop.prevent="deleteLike"
+        >Unlike</button>
         <button
           class="btn btn-primary like mr-2"
           type="button"
           v-else
-          @click.stop.prevent="addLike">Like</button>
+          @click.stop.prevent="addLike"
+        >Like</button>
       </div>
     </div>
   </div>
@@ -60,25 +63,25 @@ export default {
       this.restaurant = {
         ...this.restaurant, //保留餐廳內原有資料
         isFavorited: true
-      }
+      };
     },
     deleteFavorite() {
       this.restaurant = {
         ...this.restaurant, //保留餐廳內原有資料
         isFavorited: false
-      }
+      };
     },
     addLike() {
       this.restaurant = {
         ...this.restaurant,
         isLiked: true
-      }
+      };
     },
     deleteLike() {
       this.restaurant = {
         ...this.restaurant,
         isLiked: false
-      }
+      };
     }
   }
 };
