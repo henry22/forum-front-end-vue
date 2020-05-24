@@ -5,14 +5,17 @@
     <RestaurantDetail :initial-restaurant="restaurant" />
     <hr />
     <!-- 餐廳評論 RestaurantComments -->
-    <RestaurantComments :restaurant-comments="restaurantComments"/>
+    <RestaurantComments
+      :restaurant-comments="restaurantComments"
+      @after-delete-comment="afterDeleteComment"
+    />
     <!-- 新增評論 CreateComment -->
   </div>
 </template>
 
 <script>
-import RestaurantDetail from './../components/RestaurantDetail'
-import RestaurantComments from './../components/RestaurantComments'
+import RestaurantDetail from "./../components/RestaurantDetail";
+import RestaurantComments from "./../components/RestaurantComments";
 
 const dummyData = {
   restaurant: {
@@ -374,12 +377,12 @@ export default {
     };
   },
   created() {
-    const {id: restaurantId} = this.$route.params
-    this.fetchRestaurant(restaurantId)
+    const { id: restaurantId } = this.$route.params;
+    this.fetchRestaurant(restaurantId);
   },
   methods: {
     fetchRestaurant(restaurantId) {
-      console.log('fetchRestaurant id: ', restaurantId)
+      console.log("fetchRestaurant id: ", restaurantId);
 
       const { restaurant, isFavorited, isLiked } = dummyData;
       const {
@@ -396,7 +399,7 @@ export default {
       this.restaurant = {
         id,
         name,
-        categoryName: Category ? Category.name : '未分類',
+        categoryName: Category ? Category.name : "未分類",
         image,
         openingHours: opening_hours,
         tel,
@@ -404,8 +407,12 @@ export default {
         description,
         isFavorited,
         isLiked
-      }
-      this.restaurantComments = Comments
+      };
+      this.restaurantComments = Comments;
+    },
+    afterDeleteComment(commentId) {
+      // 以 filter 保留未被選擇的 comment.id
+      this.restaurantComments = this.restaurantComments.filter(restaurantComment => restaurantComment.id !== commentId)
     }
   }
 };
