@@ -38,6 +38,11 @@ const routes = [
     component: () => import('../views/RestaurantsTop')
   },
   {
+    path: '/restaurants/:id',
+    name: 'restaurant',
+    component: () => import('../views/Restaurant')
+  },
+  {
     path: '/users/top',
     name: 'users-top',
     component: () => import('../views/UsersTop')
