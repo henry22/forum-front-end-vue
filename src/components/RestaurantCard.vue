@@ -2,7 +2,7 @@
   <div class="col-md-6 col-lg-4">
     <div class="card mb-4">
       <img
-        :src="restaurant.image"
+        :src="restaurant.image | emptyImage"
         alt="Card image cap"
         class="card-img-top"
         width="286px"
@@ -46,7 +46,11 @@
 </template>
 
 <script>
+import {emptyImageFilter} from './../utils/mixins'
+
 export default {
+  name: 'RestaurantCard',
+  mixins: [emptyImageFilter],
   props: {
     initialRestaurant: {
       type: Object,

@@ -9,15 +9,18 @@
         :key="comment.id"
         :to="{name: 'restaurant', params: {id: comment.Restaurant.id}}"
       >
-        <img :src="comment.Restaurant.image" width="60" height="60" class="mr-1 mb-1" />
+        <img :src="comment.Restaurant.image | emptyImage" width="60" height="60" class="mr-1 mb-1" />
       </router-link>
     </div>
   </div>
 </template>
 
 <script>
+import {emptyImageFilter} from './../utils/mixins'
+
 export default {
   name: 'UserCommentsCard',
+  mixins: [emptyImageFilter],
   props: {
     comments: {
       type: Array,
