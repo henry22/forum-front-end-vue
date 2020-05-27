@@ -10,7 +10,9 @@
           @click.stop.prevent="handleDeleteButtonClick(restaurantComment.id)"
         >Delete</button>
         <h3>
-          <a href="#">{{restaurantComment.User.name}}</a>
+          <router-link
+            :to="{name: 'user', params: {id: restaurantComment.User.id}}"
+          >{{restaurantComment.User.name}}</router-link>
         </h3>
         <p>{{restaurantComment.text}}</p>
         <footer class="blockquote-footer">{{restaurantComment.createdAt | fromNow}}</footer>
@@ -51,10 +53,10 @@ export default {
   },
   methods: {
     handleDeleteButtonClick(commentId) {
-      console.log('handleDeleteButtonClick', commentId)
+      console.log("handleDeleteButtonClick", commentId);
       // TODO: 請求 API 伺服器刪除 id 為 commentId 的評論
       // 觸發父層事件 - $emit( '事件名稱' , 傳遞的資料 )
-      this.$emit('after-delete-comment', commentId)
+      this.$emit("after-delete-comment", commentId);
     }
   }
 };
