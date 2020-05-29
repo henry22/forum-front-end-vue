@@ -147,13 +147,13 @@ export default {
     initialRestaurant: {
       type: Object,
       default: () => ({
-        name: '',
-        categoryId: '',
-        tel: '',
-        address: '',
-        description: '',
-        image: '',
-        openingHours: ''
+        name: "",
+        categoryId: "",
+        tel: "",
+        address: "",
+        description: "",
+        image: "",
+        openingHours: ""
       })
     }
   },
@@ -176,7 +176,7 @@ export default {
     this.restaurant = {
       ...this.restaurant,
       ...this.initialRestaurant
-    }
+    };
   },
   methods: {
     fetchCategories() {
