@@ -88,6 +88,11 @@ const routes = [
     component: () => import('../views/AdminRestaurant')
   },
   {
+    path: '/admin/categories',
+    name: 'admin-categories',
+    component: () => import('../views/AdminCategories')
+  },
+  {
     path: '*',
     name: 'not-found',
     component: NotFound
