@@ -35,7 +35,11 @@
         />
       </div>
 
-      <button class="btn btn-lg btn-primary btn-block mb-3" type="submit">Submit</button>
+      <button
+        class="btn btn-lg btn-primary btn-block mb-3"
+        type="submit"
+        :disabled="isProcessing"
+      >Submit</button>
 
       <div class="text-center mb-3">
         <p>
@@ -50,27 +54,31 @@
 
 <script>
 import authorizationAPI from "./../apis/authorization";
-import {Toast} from './../utils/helpers'
+import { Toast } from "./../utils/helpers";
 
 export default {
   data() {
     return {
       email: "",
-      password: ""
+      password: "",
+      isProcessing: false
     };
   },
   methods: {
     handleSubmit() {
       // 如果 email 或 password 為空，則使用 Toast 提示
       // 然後 return 不繼續往後執行
-      if(!this.email || !this.password) {
+      if (!this.email || !this.password) {
         Toast.fire({
-          icon: 'warning',
-          title: '請填入 email 和 password'
-        })
+          icon: "warning",
+          title: "請填入 email 和 password"
+        });
 
-        return
+        return;
       }
+
+      this.isProcessing = true;
+
       authorizationAPI
         .signIn({
           email: this.email,
@@ -88,15 +96,18 @@ export default {
           localStorage.setItem("token", data.token);
           // 成功登入後轉址到餐聽首頁
           this.$router.push("/restaurants");
-        }).catch(error => {
+        })
+        .catch(error => {
           // 將密碼欄位清空
-          this.password = ''
+          this.password = "";
           // 顯示錯誤提示
           Toast.fire({
-            icon: 'warning',
-            title: '請確認您輸入了正確的帳號密碼'
-          })
-          console.log('error', error)
+            icon: "warning",
+            title: "請確認您輸入了正確的帳號密碼"
+          });
+
+          this.isProcessing = false;
+          console.log("error", error);
         });
     }
   }
