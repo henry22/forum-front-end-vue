@@ -10,22 +10,25 @@
         type="button"
         class="btn btn-danger"
         v-if="user.isFollowed"
-        @click.stop.prevent="removeFollow"
+        @click.stop.prevent="deleteFollowing(user.id)"
       >取消追蹤</button>
       <button
         type="button"
         class="btn btn-primary"
         v-else
-        @click.stop.prevent="addFollow">追蹤</button>
+        @click.stop.prevent="addFollowing(user.id)"
+      >追蹤</button>
     </p>
   </div>
 </template>
 
 <script>
-import {emptyImageFilter} from './../utils/mixins'
+import { emptyImageFilter } from "./../utils/mixins";
+import usersApi from "./../apis/users";
+import { Toast } from "./../utils/helpers";
 
 export default {
-  name: 'UserCard',
+  name: "UserCard",
   mixins: [emptyImageFilter],
   props: {
     initialUser: {
@@ -39,17 +42,48 @@ export default {
     };
   },
   methods: {
-    addFollow() {
-      this.user = {
-        ...this.user,
-        isFollowed: true
-      };
+    async addFollowing(userId) {
+      try {
+        const { data } = await usersApi.addFollowing({ userId });
+
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+
+        this.user = {
+          ...this.user,
+          followerCount: this.user.followerCount + 1,
+          isFollowed: true
+        };
+      } catch (error) {
+        console.log("error", error);
+
+        Toast.fire({
+          icon: "error",
+          title: "無法加入追蹤，請稍後再試"
+        });
+      }
     },
-    removeFollow() {
-      this.user = {
-        ...this.user,
-        isFollowed: false
-      };
+    async deleteFollowing(userId) {
+      try {
+        const { data } = await usersApi.deleteFollowing({ userId });
+
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+        this.user = {
+          ...this.user,
+          followerCount: this.user.followerCount - 1,
+          isFollowed: false
+        };
+      } catch (error) {
+        console.log("error", error);
+
+        Toast.fire({
+          icon: "error",
+          title: "無法取消追蹤，請稍後再試"
+        });
+      }
     }
   }
 };
