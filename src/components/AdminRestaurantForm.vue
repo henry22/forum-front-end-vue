@@ -1,5 +1,5 @@
 <template>
-  <form @submit.stop.prevent="handleSubmit">
+  <form @submit.stop.prevent="handleSubmit" v-show="!isLoading">
     <div class="form-group">
       <label for="name">Name</label>
       <input
@@ -94,52 +94,9 @@
 </template>
 
 <script>
-const dummyData = {
-  categories: [
-    {
-      id: 1,
-      name: "中式料理",
-      createdAt: "2020-02-28T14:38:32.000Z",
-      updatedAt: "2020-05-17T03:45:22.000Z"
-    },
-    {
-      id: 2,
-      name: "日本料理",
-      createdAt: "2020-02-28T14:38:32.000Z",
-      updatedAt: "2020-02-28T14:38:32.000Z"
-    },
-    {
-      id: 3,
-      name: "義大利料理",
-      createdAt: "2020-02-28T14:38:32.000Z",
-      updatedAt: "2020-02-28T14:38:32.000Z"
-    },
-    {
-      id: 4,
-      name: "墨西哥料理",
-      createdAt: "2020-02-28T14:38:32.000Z",
-      updatedAt: "2020-02-28T14:38:32.000Z"
-    },
-    {
-      id: 5,
-      name: "素食料理",
-      createdAt: "2020-02-28T14:38:32.000Z",
-      updatedAt: "2020-02-28T14:38:32.000Z"
-    },
-    {
-      id: 6,
-      name: "美式料理",
-      createdAt: "2020-02-28T14:38:32.000Z",
-      updatedAt: "2020-04-07T09:46:10.000Z"
-    },
-    {
-      id: 1592,
-      name: "dark cousine",
-      createdAt: "2020-05-17T03:28:54.000Z",
-      updatedAt: "2020-05-17T03:46:06.000Z"
-    }
-  ]
-};
+// STEP 1: 匯入 adminAPI 和錯誤提示用的 Toast
+import adminApi from "./../apis/admin";
+import { Toast } from "./../utils/helpers";
 
 export default {
   name: "AdminRestaurantForm",
@@ -168,7 +125,8 @@ export default {
         image: "",
         openingHours: ""
       },
-      categories: []
+      categories: [],
+      isLoading: true
     };
   },
   created() {
@@ -179,8 +137,24 @@ export default {
     };
   },
   methods: {
-    fetchCategories() {
-      this.categories = dummyData.categories;
+    // STEP 2: 改成 async...await 語法
+    async fetchCategories() {
+      try {
+        // STEP 3: 向伺服器取得餐廳類別清單
+        const { data } = await adminApi.categories.get();
+
+        this.categories = data.categories;
+        this.isLoading = false;
+      } catch (error) {
+        console.log("error", error);
+        this.isLoading = false;
+        // STEP 4: 在 catch 中進行錯誤處理
+        Toast.fire({
+          icon: "error",
+          title: "無法取得餐廳類別，請稍後再試"
+        });
+      }
+      // this.categories = dummyData.categories;
     },
     handleFileChange(e) {
       const { files } = e.target;
