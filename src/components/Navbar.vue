@@ -17,7 +17,11 @@
     <div id="navbarSupportedContent" class="navbar-collapse collapse">
       <div class="ml-auto d-flex align-items-center">
         <!-- is user is admin -->
-        <router-link class="text-white mr-3" to="/admin/restaurants" v-if="currentUser.isAdmin">管理員後台</router-link>
+        <router-link
+          class="text-white mr-3"
+          to="/admin/restaurants"
+          v-if="currentUser.isAdmin"
+        >管理員後台</router-link>
         <!-- is user is login -->
         <template v-if="isAuthenticated">
           <router-link
@@ -33,44 +37,13 @@
 </template>
 
 <script>
-// seed data
-const dummyUser = {
-  currentUser: {
-    id: 1,
-    name: "管理者",
-    email: "root@example.com",
-    image: "https://i.pravatar.cc/300",
-    isAdmin: true
-  },
-  isAuthenticated: true
-};
+import { mapState } from "vuex";
 
 export default {
   name: "Navbar",
-  // Vue 會在沒有資料時使用此預設值
-  data() {
-    return {
-      currentUser: {
-        id: -1,
-        name: "",
-        email: "",
-        image: "",
-        isAdmin: false
-      },
-      isAuthenticated: false
-    };
-  },
-  created() {
-    this.fetchUser();
-  },
-  methods: {
-    fetchUser() {
-      this.currentUser = {
-        ...this.currentUser,
-        ...dummyUser.currentUser
-      };
-      this.isAuthenticated = dummyUser.isAuthenticated;
-    }
+  // 新增 `mapState` 方法
+  computed: {
+    ...mapState(['currentUser', 'isAuthenticated'])
   }
 };
 </script>

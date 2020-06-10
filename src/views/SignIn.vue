@@ -92,6 +92,9 @@ export default {
           throw new Error(data.message);
         }
 
+        //將資料傳到vuex中
+        this.$store.commit('setCurrentUser', data.user)
+
         // 將 token 存放在 localStorage 內
         localStorage.setItem("token", data.token);
         // 成功登入後轉址到餐聽首頁
