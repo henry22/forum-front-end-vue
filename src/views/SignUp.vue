@@ -62,7 +62,11 @@
         />
       </div>
 
-      <button class="btn btn-lg btn-primary btn-block mb-3" type="submit">Submit</button>
+      <button
+        class="btn btn-lg btn-primary btn-block mb-3"
+        type="submit"
+        :disabled="isProcessing"
+      >Submit</button>
 
       <div class="text-center mb-3">
         <p>
@@ -76,26 +80,80 @@
 </template>
 
 <script>
+import authorizationApi from "./../apis/authorization";
+import { Toast } from "./../utils/helpers";
+
 export default {
   data() {
     return {
       name: "",
       email: "",
       password: "",
-      passwordCheck: ""
+      passwordCheck: "",
+      isProcessing: false
     };
   },
   methods: {
-    handleSubmit() {
-      const data = JSON.stringify({
-        name: this.name,
-        email: this.email,
-        password: this.password,
-        passwordCheck: this.passwordCheck
-      });
+    async handleSubmit() {
+      try {
+        if (
+          !this.name ||
+          !this.email ||
+          !this.password ||
+          !this.passwordCheck
+        ) {
+          Toast.fire({
+            icon: "warning",
+            title: "請確認已填寫所有欄位"
+          });
 
-      // TODO: 向後端驗證使用者登入資訊是否合法
-      console.log("data", data);
+          return;
+        }
+
+        if (this.password !== this.passwordCheck) {
+          Toast.fire({
+            icon: "warning",
+            title: "兩次輸入的密碼不同"
+          });
+
+          this.passwordCheck = "";
+          return;
+        }
+
+        this.isProcessing = true;
+
+        const { data } = await authorizationApi.signUp({
+          name: this.name,
+          email: this.email,
+          password: this.password,
+          passwordCheck: this.passwordCheck
+        });
+
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+
+        Toast.fire({
+          icon: "success",
+          title: data.message
+        });
+
+        // 成功登入後轉址到登入頁
+        this.$router.push("/signin");
+      } catch (error) {
+        console.log("error", error);
+        this.isProcessing = false;
+
+        Toast.fire({
+          icon: "error",
+          title: `無法註冊 -  ${error}`
+        });
+
+        this.name = "";
+        this.email = "";
+        this.password = "";
+        this.passwordCheck = "";
+      }
     }
   }
 };
