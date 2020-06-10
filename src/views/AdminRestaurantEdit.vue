@@ -6,29 +6,9 @@
 
 <script>
 import AdminRestaurantForm from "./../components/AdminRestaurantForm";
-
-const dummyData = {
-  restaurant: {
-    id: 5,
-    name: "Mitchel Beatty",
-    tel: "171-324-8413",
-    address: "85408 Francisca Square",
-    opening_hours: "08:00",
-    description:
-      "Aut cumque excepturi exercitationem libero voluptates impedit. Enim animi repellendus tempora doloremque. Esse in delectus sequi ullam sed animi.",
-    image: "https://i.imgur.com/awJFBLn.jpg",
-    viewCounts: 284,
-    createdAt: "2020-02-28T14:38:32.000Z",
-    updatedAt: "2020-05-26T09:46:25.000Z",
-    CategoryId: 3,
-    Category: {
-      id: 3,
-      name: "義大利料理",
-      createdAt: "2020-02-28T14:38:32.000Z",
-      updatedAt: "2020-02-28T14:38:32.000Z"
-    }
-  }
-};
+// STEP 1: 載入 adminAPI 和 Toast
+import adminApi from "./../apis/admin";
+import { Toast } from "./../utils/helpers";
 
 export default {
   name: "AdminRestaurantEdit",
@@ -60,30 +40,43 @@ export default {
         console.log(`${name}: ${value}`);
       }
     },
-    fetchRestaurant(restaurantId) {
-      console.log("fetchRestaurant id:", restaurantId);
-      const { restaurant } = dummyData;
-      const {
-        id,
-        name,
-        categoryId,
-        tel,
-        address,
-        description,
-        image,
-        opening_hours: openingHours
-      } = restaurant;
-      this.restaurant = {
-        ...restaurant,
-        id,
-        name,
-        categoryId,
-        tel,
-        address,
-        description,
-        image,
-        openingHours
-      };
+    // STEP 2: 改成 async...await 語法
+    async fetchRestaurant(restaurantId) {
+      try {
+        const { data } = await adminApi.restaurants.getDetail({ restaurantId });
+
+        // STEP 3: 透過解構賦值將需要的資料取出
+        const {
+          id,
+          name,
+          CategoryId: categoryId,
+          tel,
+          address,
+          description,
+          image,
+          opening_hours: openingHours
+        } = data.restaurant;
+
+        // STEP 4: 將資料帶入 Vue 內
+        this.restaurant = {
+          ...this.restaurant,
+          id,
+          name,
+          categoryId,
+          tel,
+          address,
+          description,
+          image,
+          openingHours
+        };
+      } catch (error) {
+        console.log("error", error);
+        //  STEP 5: 錯誤處理
+        Toast.fire({
+          icon: "error",
+          title: "無法取得餐廳資料，請稍後再試"
+        });
+      }
     }
   }
 };
