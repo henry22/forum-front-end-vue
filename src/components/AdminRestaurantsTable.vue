@@ -61,10 +61,25 @@ export default {
         });
       }
     },
-    deleteRestaurant(restaurantId) {
-      this.restaurants = this.restaurants.filter(
-        restaurant => restaurant.id !== restaurantId
-      );
+    async deleteRestaurant(restaurantId) {
+      try {
+        const { data } = await adminApi.restaurants.delete({ restaurantId });
+
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+
+        this.restaurants = this.restaurants.filter(restaurant => {
+          return restaurant.id !== restaurantId
+        })
+      } catch (error) {
+        console.log("error", error);
+
+        Toast.fire({
+          icon: "error",
+          title: "無法刪除餐廳資料，請稍後再試"
+        });
+      }
     }
   }
 };
