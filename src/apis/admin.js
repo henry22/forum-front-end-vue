@@ -18,6 +18,13 @@ export default {
           Authorization: `Bearer ${getToken()}`
         }
       })
+    },
+    get() {
+      return apiHelper.get('/admin/restaurants', {
+        headers: {
+          Authorization: `Bearer ${getToken()}`
+        }
+      })
     }
   }
 }
