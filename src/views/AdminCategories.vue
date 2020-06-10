@@ -164,10 +164,23 @@ export default {
         return category;
       });
     },
-    updateCategory({ categoryId, name }) {
-      // TODO: 透過 API 去向伺服器更新餐廳類別名稱
-      console.log("update category name", name);
-      this.toggleIsEditing(categoryId);
+    async updateCategory({ categoryId, name }) {
+      try {
+        const { data } = await adminApi.categories.update({ categoryId, name });
+
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+
+        this.toggleIsEditing(categoryId);
+      } catch (error) {
+        console.log("error", error);
+
+        Toast.fire({
+          icon: "error",
+          title: "無法更新餐廳類別，請稍後再試"
+        });
+      }
     },
     handleCancel(categoryId) {
       this.categories = this.categories.map(category => {
