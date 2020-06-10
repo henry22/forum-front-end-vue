@@ -67,54 +67,8 @@
 <script>
 import AdminNav from "./../components/AdminNav";
 import { v4 as uuidv4 } from "uuid";
-
-//  2. 定義暫時使用的資料
-const dummyData = {
-  categories: [
-    {
-      id: 1,
-      name: "中式料理",
-      createdAt: "2020-02-28T14:38:32.000Z",
-      updatedAt: "2020-05-17T03:45:22.000Z"
-    },
-    {
-      id: 2,
-      name: "日本料理",
-      createdAt: "2020-02-28T14:38:32.000Z",
-      updatedAt: "2020-02-28T14:38:32.000Z"
-    },
-    {
-      id: 3,
-      name: "義大利料理",
-      createdAt: "2020-02-28T14:38:32.000Z",
-      updatedAt: "2020-02-28T14:38:32.000Z"
-    },
-    {
-      id: 4,
-      name: "墨西哥料理",
-      createdAt: "2020-02-28T14:38:32.000Z",
-      updatedAt: "2020-02-28T14:38:32.000Z"
-    },
-    {
-      id: 5,
-      name: "素食料理",
-      createdAt: "2020-02-28T14:38:32.000Z",
-      updatedAt: "2020-02-28T14:38:32.000Z"
-    },
-    {
-      id: 6,
-      name: "美式料理",
-      createdAt: "2020-02-28T14:38:32.000Z",
-      updatedAt: "2020-04-07T09:46:10.000Z"
-    },
-    {
-      id: 1592,
-      name: "dark cousine",
-      createdAt: "2020-05-17T03:28:54.000Z",
-      updatedAt: "2020-05-17T03:46:06.000Z"
-    }
-  ]
-};
+import adminApi from "./../apis/admin";
+import { Toast } from "./../utils/helpers";
 
 export default {
   name: "AdminCategories",
@@ -134,13 +88,24 @@ export default {
   },
   methods: {
     // 4. 定義 `fetchCategories` 方法，把 `dummyData` 帶入 Vue 物件
-    fetchCategories() {
-      // 在每一個 category 中都添加一個 isEditing 屬性
-      this.categories = dummyData.categories.map(category => ({
-        ...category,
-        isEditing: false,
-        nameCached: ""
-      }));
+    async fetchCategories() {
+      try {
+        const {data} = await adminApi.categories.get()
+
+        // 在每一個 category 中都添加一個 isEditing 屬性
+        this.categories = data.categories.map(category => ({
+          ...category,
+          isEditing: false,
+          nameCached: ""
+        }));
+      } catch (error) {
+        console.log("error", error);
+
+        Toast.fire({
+          icon: 'error',
+          title: '無法取得餐廳類別，請稍後再試'
+        })
+      }
     },
     createCategory() {
       // TODO: 透過 API 告知伺服器欲新增的餐廳類別...
