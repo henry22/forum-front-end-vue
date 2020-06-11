@@ -55,7 +55,7 @@
         type="button"
         class="btn btn-primary like mr-2"
         v-else
-        @click.stop.prevent="addLike"
+        @click.stop.prevent="addLike(restaurant.id)"
       >Like</button>
     </div>
   </div>
@@ -124,15 +124,30 @@ export default {
 
         Toast.fire({
           icon: "error",
-          title: "無法將餐廳刪除最愛，請稍後再試"
+          title: "無法將餐廳從最愛移除，請稍後再試"
         });
       }
     },
-    addLike() {
-      this.restaurant = {
-        ...this.restaurant,
-        isLiked: true
-      };
+    async addLike(restaurantId) {
+      try {
+        const {data} = await usersApi.addLike({restaurantId})
+
+        if(data.status !== 'success') {
+          throw new Error(data.message)
+        }
+
+        this.restaurant = {
+          ...this.restaurant,
+          isLiked: true
+        };
+      } catch(error) {
+        console.error(error.message)
+
+        Toast.fire({
+          icon: 'error',
+          title: '無法按讚，請稍後再試'
+        })
+      }
     },
     deleteLike() {
       this.restaurant = {
