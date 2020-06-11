@@ -81,9 +81,9 @@ export default {
         this.isProcessing = true;
 
         const response = await authorizationAPI.signIn({
-            email: this.email,
-            password: this.password
-          })
+          email: this.email,
+          password: this.password
+        })
 
         // TODO: 取得 API 請求後的資料
         const { data } = response;
