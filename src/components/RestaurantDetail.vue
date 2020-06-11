@@ -49,7 +49,7 @@
         type="button"
         class="btn btn-danger like mr-2"
         v-if="restaurant.isLiked"
-        @click.stop.prevent="deleteLike"
+        @click.stop.prevent="deleteLike(restaurant.id)"
       >Unlike</button>
       <button
         type="button"
@@ -130,30 +130,45 @@ export default {
     },
     async addLike(restaurantId) {
       try {
-        const {data} = await usersApi.addLike({restaurantId})
+        const { data } = await usersApi.addLike({ restaurantId });
 
-        if(data.status !== 'success') {
-          throw new Error(data.message)
+        if (data.status !== "success") {
+          throw new Error(data.message);
         }
 
         this.restaurant = {
           ...this.restaurant,
           isLiked: true
         };
-      } catch(error) {
-        console.error(error.message)
+      } catch (error) {
+        console.error(error.message);
 
         Toast.fire({
-          icon: 'error',
-          title: '無法按讚，請稍後再試'
-        })
+          icon: "error",
+          title: "無法按讚，請稍後再試"
+        });
       }
     },
-    deleteLike() {
-      this.restaurant = {
-        ...this.restaurant,
-        isLiked: false
-      };
+    async deleteLike(restaurantId) {
+      try {
+        const { data } = await usersApi.deleteLike({ restaurantId });
+
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+
+        this.restaurant = {
+          ...this.restaurant,
+          isLiked: false
+        };
+      } catch (error) {
+        console.error(error.message);
+
+        Toast.fire({
+          icon: "error",
+          title: "無法取消按讚，請稍後再試"
+        });
+      }
     }
   }
 };
