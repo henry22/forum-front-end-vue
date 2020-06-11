@@ -31,13 +31,13 @@
             v-if="isFollowed"
             type="button"
             class="btn btn-danger"
-            @click.stop.prevent="deleteFollowing"
+            @click.stop.prevent="deleteFollowing(user.id)"
           >取消追蹤</button>
           <button
             v-else
             type="button"
             class="btn btn-primary"
-            @click.stop.prevent="addFollowing"
+            @click.stop.prevent="addFollowing(user.id)"
           >追蹤</button>
         </template>
       </div>
@@ -46,10 +46,12 @@
 </template>
 
 <script>
-import {emptyImageFilter} from './../utils/mixins'
+import { emptyImageFilter } from "./../utils/mixins";
+import usersApi from "./../apis/users";
+import { Toast } from "./../utils/helpers";
 
 export default {
-  name: 'UserProfileCard',
+  name: "UserProfileCard",
   mixins: [emptyImageFilter],
   props: {
     user: {
@@ -68,15 +70,50 @@ export default {
   data() {
     return {
       isFollowed: this.initialIsFollowed
+    };
+  },
+  watch: {
+    initialIsFollowed(isFollowed) {
+      this.isFollowed = isFollowed
     }
   },
   methods: {
-    addFollowing() {
-      this.isFollowed = true
+    async addFollowing(userId) {
+      try {
+        const { data } = await usersApi.addFollowing({ userId });
+
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+
+        this.isFollowed = true;
+      } catch (error) {
+        console.error(error.message);
+
+        Toast.fire({
+          icon: "error",
+          title: "無法加入追蹤，請稍後再試"
+        });
+      }
     },
-    deleteFollowing() {
-      this.isFollowed = false
+    async deleteFollowing(userId) {
+      try {
+        const {data} = await usersApi.deleteFollowing({userId})
+
+        if(data.status !== 'success') {
+          throw new Error(data.message)
+        }
+
+        this.isFollowed = false;
+      } catch(error) {
+        console.error(error.message)
+
+        Toast.fire({
+          icon: 'error',
+          title: '無法取消追蹤，請稍後再試'
+        })
+      }
     }
   }
-}
+};
 </script>
