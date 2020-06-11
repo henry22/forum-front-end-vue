@@ -29,7 +29,11 @@
             :to="{name: 'user', params: {id: currentUser.id}}"
           >{{currentUser.name || '使用者'}} 您好</router-link>
 
-          <button class="btn btn-small btn-outline-success my-2 my-sm-0" type="button">登出</button>
+          <button
+            class="btn btn-small btn-outline-success my-2 my-sm-0"
+            type="button"
+            @click="logout"
+          >登出</button>
         </template>
       </div>
     </div>
@@ -43,7 +47,13 @@ export default {
   name: "Navbar",
   // 新增 `mapState` 方法
   computed: {
-    ...mapState(['currentUser', 'isAuthenticated'])
+    ...mapState(["currentUser", "isAuthenticated"])
+  },
+  methods: {
+    logout() {
+      this.$store.commit("revokeAuthentication");
+      this.$router.push('/signin')
+    }
   }
 };
 </script>
