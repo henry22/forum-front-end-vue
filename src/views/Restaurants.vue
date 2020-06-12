@@ -5,23 +5,26 @@
     <!-- 餐廳類別標籤 RestaurantsNavPills -->
     <RestaurantsNavPills :categories="categories" />
 
-    <div class="row">
-      <!-- 餐廳卡片 RestaurantCard-->
-      <RestaurantCard
-        v-for="restaurant in restaurants"
-        :key="restaurant.id"
-        :initial-restaurant="restaurant"
+    <Spinner v-if="isLoading" />
+    <template v-else>
+      <div class="row">
+        <!-- 餐廳卡片 RestaurantCard-->
+        <RestaurantCard
+          v-for="restaurant in restaurants"
+          :key="restaurant.id"
+          :initial-restaurant="restaurant"
+        />
+      </div>
+      <!-- 分頁標籤 RestaurantPagination -->
+      <RestaurantPagination
+        :current-page="currentPage"
+        :total-page="totalPage"
+        :category-id="categoryId"
+        :previous-page="previousPage"
+        :next-page="nextPage"
+        v-if="totalPage.length > 1"
       />
-    </div>
-    <!-- 分頁標籤 RestaurantPagination -->
-    <RestaurantPagination
-      :current-page="currentPage"
-      :total-page="totalPage"
-      :category-id="categoryId"
-      :previous-page="previousPage"
-      :next-page="nextPage"
-      v-if="totalPage.length > 1"
-    />
+    </template>
   </div>
 </template>
 
@@ -30,6 +33,7 @@ import NavTabs from "./../components/NavTabs";
 import RestaurantCard from "./../components/RestaurantCard";
 import RestaurantsNavPills from "./../components/RestaurantsNavPills";
 import RestaurantPagination from "./../components/RestaurantsPagination";
+import Spinner from "./../components/Spinner";
 // STEP 1：透過 import 匯入剛剛撰寫好用來呼叫 API 的方法
 import restaurantsApi from "./../apis/restaurants";
 import { Toast } from "../utils/helpers";
@@ -39,7 +43,8 @@ export default {
     NavTabs,
     RestaurantCard,
     RestaurantsNavPills,
-    RestaurantPagination
+    RestaurantPagination,
+    Spinner
   },
   data() {
     return {
@@ -49,7 +54,8 @@ export default {
       currentPage: 1,
       totalPage: [],
       previousPage: -1,
-      nextPage: -1
+      nextPage: -1,
+      isLoading: true
     };
   },
   created() {
@@ -73,6 +79,7 @@ export default {
     // 呼叫 API 後取得 response
     async fetchRestaurants({ queryPage, queryCategoryId }) {
       try {
+        this.isLoading = true;
         const response = await restaurantsApi.getRestaurants({
           page: queryPage,
           categoryId: queryCategoryId
@@ -97,7 +104,10 @@ export default {
         this.totalPage = totalPage;
         this.previousPage = prev;
         this.nextPage = next;
+
+        this.isLoading = false;
       } catch (error) {
+        this.isLoading = false;
         Toast.fire({
           icon: "error",
           title: "無法取得餐廳資料，請稍後再試"

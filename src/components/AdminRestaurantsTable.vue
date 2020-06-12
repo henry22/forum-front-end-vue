@@ -1,46 +1,55 @@
 <template>
-  <table class="table">
-    <thead class="thead-dark">
-      <tr>
-        <th scope="col">#</th>
-        <th scope="col">Category</th>
-        <th scope="col">Name</th>
-        <th scope="col" width="300">操作</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="restaurant in restaurants" :key="restaurant.id">
-        <th scope="col">{{restaurant.id}}</th>
-        <td>{{restaurant.Category ? restaurant.Category.name : '未分類'}}</td>
-        <td>{{restaurant.name}}</td>
-        <td class="d-flex justify-content-between">
-          <router-link
-            :to="{name: 'admin-restaurant', params: {id: restaurant.id}}"
-            class="btn btn-link"
-          >Show</router-link>
-          <router-link
-            :to="{name: 'admin-restaurant-edit', params: {id: restaurant.id}}"
-            class="btn btn-link"
-          >Edit</router-link>
-          <button
-            type="button"
-            class="btn btn-link"
-            @click.stop.prevent="deleteRestaurant(restaurant.id)"
-          >Delete</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div>
+    <Spinner v-if="isLoading"/>
+    <table class="table" v-else>
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Category</th>
+          <th scope="col">Name</th>
+          <th scope="col" width="300">操作</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="restaurant in restaurants" :key="restaurant.id">
+          <th scope="col">{{restaurant.id}}</th>
+          <td>{{restaurant.Category ? restaurant.Category.name : '未分類'}}</td>
+          <td>{{restaurant.name}}</td>
+          <td class="d-flex justify-content-between">
+            <router-link
+              :to="{name: 'admin-restaurant', params: {id: restaurant.id}}"
+              class="btn btn-link"
+            >Show</router-link>
+            <router-link
+              :to="{name: 'admin-restaurant-edit', params: {id: restaurant.id}}"
+              class="btn btn-link"
+            >Edit</router-link>
+            <button
+              type="button"
+              class="btn btn-link"
+              @click.stop.prevent="deleteRestaurant(restaurant.id)"
+            >Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </template>
 
 <script>
 import adminApi from "./../apis/admin";
 import { Toast } from "./../utils/helpers";
+import Spinner from './Spinner'
 
 export default {
+  name: 'AdminRestaurantsTable',
+  components: {
+    Spinner
+  },
   data() {
     return {
-      restaurants: []
+      restaurants: [],
+      isLoading: true
     };
   },
   created() {
@@ -51,13 +60,12 @@ export default {
       try {
         const { data } = await adminApi.restaurants.get();
 
-        if (data.status !== "success") {
-          throw new Error(data.message);
-        }
-
         this.restaurants = data.restaurants;
+
+        this.isLoading = false;
       } catch (error) {
         console.log("error", error);
+        this.isLoading = false;
 
         Toast.fire({
           icon: "error",

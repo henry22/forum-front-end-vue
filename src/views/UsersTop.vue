@@ -2,17 +2,22 @@
   <div class="container py-5">
     <!-- 使用 NavTabs 元件 -->
     <NavTabs />
-    <h1 class="mt-5">美食達人</h1>
-    <hr />
-    <div class="row text-center">
-      <UserCard v-for="user in users" :key="user.id" :initial-user="user" />
-    </div>
+
+    <Spinner v-if="isLoading" />
+    <template v-else>
+      <h1 class="mt-5">美食達人</h1>
+      <hr />
+      <div class="row text-center">
+        <UserCard v-for="user in users" :key="user.id" :initial-user="user" />
+      </div>
+    </template>
   </div>
 </template>
 
 <script>
 import NavTabs from "./../components/NavTabs";
 import UserCard from "./../components/UserCard";
+import Spinner from "./../components/Spinner";
 import usersApi from "./../apis/users";
 import { Toast } from "./../utils/helpers";
 
@@ -20,11 +25,13 @@ export default {
   name: "usersTop",
   components: {
     NavTabs,
-    UserCard
+    UserCard,
+    Spinner
   },
   data() {
     return {
-      users: []
+      users: [],
+      isLoading: true
     };
   },
   created() {
@@ -42,8 +49,11 @@ export default {
           followerCount: user.FollowerCount,
           isFollowed: user.isFollowed
         }));
+
+        this.isLoading = false;
       } catch (error) {
         console.log("error", error);
+        this.isLoading = false;
 
         Toast.fire({
           icon: "error",

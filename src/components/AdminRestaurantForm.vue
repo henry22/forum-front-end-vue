@@ -1,109 +1,116 @@
 <template>
-  <form @submit.stop.prevent="handleSubmit" v-show="!isLoading">
-    <div class="form-group">
-      <label for="name">Name</label>
-      <input
-        type="text"
-        id="name"
-        class="form-control"
-        name="name"
-        placeholder="Enter name"
-        required
-        v-model="restaurant.name"
-      />
-    </div>
-    <div class="form-group">
-      <label for="categoryId">Category</label>
-      <select
-        name="categoryId"
-        id="categoryId"
-        class="form-control"
-        required
-        v-model="restaurant.categoryId"
-      >
-        <option value selected disabled>--請選擇--</option>
-        <option
-          v-for="category in categories"
-          :key="category.id"
-          :value="category.id"
-        >{{category.name}}</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label for="tel">Tel</label>
-      <input
-        type="text"
-        id="tel"
-        class="form-control"
-        name="tel"
-        placeholder="Enter telephone number"
-        v-model="restaurant.tel"
-      />
-    </div>
-    <div class="form-group">
-      <label for="address">Address</label>
-      <input
-        type="text"
-        id="address"
-        class="form-control"
-        name="address"
-        placeholder="Enter address"
-        v-model="restaurant.address"
-      />
-    </div>
-    <div class="form-group">
-      <label for="opening-hours">Opening Hours</label>
-      <input
-        type="time"
-        id="opening-hours"
-        class="form-control"
-        name="opening_hours"
-        v-model="restaurant.openingHours"
-      />
-    </div>
-    <div class="form-group">
-      <label for="description">Description</label>
-      <textarea
-        name="description"
-        id="description"
-        rows="3"
-        class="form-control"
-        v-model="restaurant.description"
-      ></textarea>
-    </div>
-    <div class="form-group">
-      <label for="image">Image</label>
-      <img
-        v-if="restaurant.image"
-        :src="restaurant.image"
-        class="d-block img-thumbnail mb-3"
-        width="200"
-        height="200"
-      />
-      <input
-        type="file"
-        id="image"
-        name="image"
-        accept="image/*"
-        class="form-control-file"
-        @change="handleFileChange"
-      />
-    </div>
-    <button
-      type="submit"
-      class="btn btn-primary"
-      :disabled="isProcessing"
-    >{{isProcessing ? '處理中...' : '送出'}}</button>
-  </form>
+  <div>
+    <Spinner v-if="isLoading"/>
+    <form @submit.stop.prevent="handleSubmit" v-else>
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input
+          type="text"
+          id="name"
+          class="form-control"
+          name="name"
+          placeholder="Enter name"
+          required
+          v-model="restaurant.name"
+        />
+      </div>
+      <div class="form-group">
+        <label for="categoryId">Category</label>
+        <select
+          name="categoryId"
+          id="categoryId"
+          class="form-control"
+          required
+          v-model="restaurant.categoryId"
+        >
+          <option value selected disabled>--請選擇--</option>
+          <option
+            v-for="category in categories"
+            :key="category.id"
+            :value="category.id"
+          >{{category.name}}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="tel">Tel</label>
+        <input
+          type="text"
+          id="tel"
+          class="form-control"
+          name="tel"
+          placeholder="Enter telephone number"
+          v-model="restaurant.tel"
+        />
+      </div>
+      <div class="form-group">
+        <label for="address">Address</label>
+        <input
+          type="text"
+          id="address"
+          class="form-control"
+          name="address"
+          placeholder="Enter address"
+          v-model="restaurant.address"
+        />
+      </div>
+      <div class="form-group">
+        <label for="opening-hours">Opening Hours</label>
+        <input
+          type="time"
+          id="opening-hours"
+          class="form-control"
+          name="opening_hours"
+          v-model="restaurant.openingHours"
+        />
+      </div>
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea
+          name="description"
+          id="description"
+          rows="3"
+          class="form-control"
+          v-model="restaurant.description"
+        ></textarea>
+      </div>
+      <div class="form-group">
+        <label for="image">Image</label>
+        <img
+          v-if="restaurant.image"
+          :src="restaurant.image"
+          class="d-block img-thumbnail mb-3"
+          width="200"
+          height="200"
+        />
+        <input
+          type="file"
+          id="image"
+          name="image"
+          accept="image/*"
+          class="form-control-file"
+          @change="handleFileChange"
+        />
+      </div>
+      <button
+        type="submit"
+        class="btn btn-primary"
+        :disabled="isProcessing"
+      >{{isProcessing ? '處理中...' : '送出'}}</button>
+    </form>
+  </div>
 </template>
 
 <script>
 // STEP 1: 匯入 adminAPI 和錯誤提示用的 Toast
 import adminApi from "./../apis/admin";
 import { Toast } from "./../utils/helpers";
+import Spinner from './Spinner'
 
 export default {
   name: "AdminRestaurantForm",
+  components: {
+    Spinner
+  },
   props: {
     initialRestaurant: {
       type: Object,
