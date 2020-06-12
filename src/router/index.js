@@ -7,6 +7,16 @@ import store from './../store'
 
 Vue.use(VueRouter)
 
+const authorizeIsAdmin = (to, from, next) => {
+  const currentUser = store.state.currentUser
+  if(currentUser && !currentUser.isAdmin) {
+    next('/not-found')
+    return
+  }
+
+  next()
+}
+
 const routes = [
   {
     path: '/',
@@ -66,37 +76,44 @@ const routes = [
   {
     path: '/admin',
     exact: true,
-    redirect: '/admin/restaurants'
+    redirect: '/admin/restaurants',
+    beforeEnter: authorizeIsAdmin
   },
   {
     path: "/admin/restaurants",
     name: 'admin-restaurants',
-    component: () => import('../views/AdminRestaurants')
+    component: () => import('../views/AdminRestaurants'),
+    beforeEnter: authorizeIsAdmin
   },
   {
     path: '/admin/restaurants/new',
     name: 'admin-restaurant-new',
-    component: () => import('../views/AdminRestaurantNew')
+    component: () => import('../views/AdminRestaurantNew'),
+    beforeEnter: authorizeIsAdmin
   },
   {
     path: '/admin/restaurants/:id/edit',
     name: 'admin-restaurant-edit',
-    component: () => import('../views/AdminRestaurantEdit')
+    component: () => import('../views/AdminRestaurantEdit'),
+    beforeEnter: authorizeIsAdmin
   },
   {
     path: '/admin/restaurants/:id',
     name: 'admin-restaurant',
-    component: () => import('../views/AdminRestaurant')
+    component: () => import('../views/AdminRestaurant'),
+    beforeEnter: authorizeIsAdmin
   },
   {
     path: '/admin/categories',
     name: 'admin-categories',
-    component: () => import('../views/AdminCategories')
+    component: () => import('../views/AdminCategories'),
+    beforeEnter: authorizeIsAdmin
   },
   {
     path: '/admin/users',
     name: 'admin-users',
-    component: () => import('../views/AdminUsers')
+    component: () => import('../views/AdminUsers'),
+    beforeEnter: authorizeIsAdmin
   },
   {
     path: '*',
