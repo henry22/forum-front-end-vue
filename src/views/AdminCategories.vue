@@ -97,6 +97,10 @@ export default {
       try {
         const { data } = await adminApi.categories.get();
 
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+
         // 在每一個 category 中都添加一個 isEditing 屬性
         this.categories = data.categories.map(category => ({
           ...category,

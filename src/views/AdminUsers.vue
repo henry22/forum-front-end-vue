@@ -58,6 +58,10 @@ export default {
       try {
         const { data } = await adminApi.users.get();
 
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+
         this.users = data.users;
       } catch (error) {
         console.error(error.message);

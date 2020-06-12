@@ -51,11 +51,15 @@ export default {
       try {
         const { data } = await adminApi.restaurants.get();
 
+        if (data.status !== "success") {
+          throw new Error(data.message);
+        }
+
         this.restaurants = data.restaurants;
       } catch (error) {
         console.log("error", error);
 
-        Toast({
+        Toast.fire({
           icon: "error",
           title: "無法取得餐廳資料，請稍後再試"
         });
@@ -70,8 +74,8 @@ export default {
         }
 
         this.restaurants = this.restaurants.filter(restaurant => {
-          return restaurant.id !== restaurantId
-        })
+          return restaurant.id !== restaurantId;
+        });
       } catch (error) {
         console.log("error", error);
 
